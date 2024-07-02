@@ -1,0 +1,26 @@
+Index: fastfetch-2.17.1/CMakeLists.txt
+===================================================================
+--- fastfetch-2.17.1.orig/CMakeLists.txt
++++ fastfetch-2.17.1/CMakeLists.txt
+@@ -1322,12 +1322,17 @@ if(LINUX)
+         set(CPACK_DEBIAN_PACKAGE_PRIORITY "optional")
+ 
+         if(NOT IS_MUSL)
+-            EXECUTE_PROCESS (
++            EXECUTE_PROCESS(
+                 COMMAND getconf GNU_LIBC_VERSION
+                 OUTPUT_VARIABLE GLIBC_VERSION
+-                OUTPUT_STRIP_TRAILING_WHITESPACE)
+-            STRING (REPLACE "glibc " "" GLIBC_VERSION ${GLIBC_VERSION})
+-            set(CPACK_DEBIAN_PACKAGE_DEPENDS "libc6 (>= ${GLIBC_VERSION})")
++                OUTPUT_STRIP_TRAILING_WHITESPACE
++            )
++            if(GLIBC_VERSION)
++                STRING(REPLACE "glibc " "" GLIBC_VERSION "${GLIBC_VERSION}")
++                set(CPACK_DEBIAN_PACKAGE_DEPENDS "libc6 (>= ${GLIBC_VERSION})")
++            else()
++                message(WARNING "Could not determine GLIBC version")
++            endif()
+         endif()
+     endif()
+ 
